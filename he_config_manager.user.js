@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.26.1
+// @version      0.26.2
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config\.happyelements\..*$/
@@ -1675,6 +1675,7 @@
   function genToolbarHtmlCode() {
     var htmlCode = '' +
         '<style>\n' +
+        'table,td {font: 12px Arial,"Microsoft Yahei",sans-serif;}\n' +
         '.ld-toolbar{width:220px; border:1px solid #ccc; background-color: #fff; padding:10px; margin:0; font-family: Arial,"Microsoft Yahei",sans-serif; font-size:12px; position:fixed; z-index:9999; right:10px; top:10px; overflow:hidden;}\n' +
         '.ld-toolbar .title{font-size:16px; color: #ff0000; font-weight: bold; margin-bottom:8px;}\n' +
         '.ld-toolbar .title .desc{font-size:14px; color: #000000; padding:0 4px;}\n' +
