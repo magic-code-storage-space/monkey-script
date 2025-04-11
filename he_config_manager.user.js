@@ -106,6 +106,10 @@
     "h5clover_shouter2": "dev3",
   };
 
+  var jsonpUrl = "https://clover.happyelements.net/ciservice/helper/test_app_env_jsonp.php";
+  //var jsonpUrl = "https://shdevapi.happyelements.cn/test_app_env_jsonp.php";
+  //var jsonpUrl = "https://dev.kuco/he/test_app_env_jsonp.php";
+
   //==========================================
   // var $ = window.jQuery;
   var $ = window.jQuery.noConflict(true);
@@ -189,9 +193,6 @@
       initFail("appJspUrl 获取失败！");
       return;
     }
-    var jsonpUrl = "https://clover.happyelements.net/ciservice/helper/test_app_env_jsonp.php";
-    //var jsonpUrl = "https://shdevapi.happyelements.cn/test_app_env_jsonp.php";
-    //var jsonpUrl = "https://dev.kuco/he/test_app_env_jsonp.php";
     $.ajax({
       url: jsonpUrl + "?appJsp=" + encodeURIComponent(appJspUrl),
       type: "GET",
@@ -352,8 +353,6 @@
     if(appConfig.app_name_prefix.indexOf("h5clover") != -1 || appConfig.app_name_prefix.indexOf("h5clvoer") != -1) {
       qaFlag = "env=qa";
     }
-    var jsonpUrl = "https://shdevapi.happyelements.cn/test_app_env_jsonp.php";
-    //var jsonpUrl = "https://dev.kuco/he/test_app_env_jsonp.php";
     $.ajax({
       url: jsonpUrl + "?appJsp=" + encodeURIComponent(appJspUrl+"?"+qaFlag),
       type: "GET",
