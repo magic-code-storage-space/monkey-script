@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.26.2
+// @version      0.26.3
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config\.happyelements\..*$/
@@ -189,7 +189,8 @@
       initFail("appJspUrl 获取失败！");
       return;
     }
-    var jsonpUrl = "https://shdevapi.happyelements.cn/test_app_env_jsonp.php";
+    var jsonpUrl = "https://clover.happyelements.net/ciservice/helper/test_app_env_jsonp.php";
+    //var jsonpUrl = "https://shdevapi.happyelements.cn/test_app_env_jsonp.php";
     //var jsonpUrl = "https://dev.kuco/he/test_app_env_jsonp.php";
     $.ajax({
       url: jsonpUrl + "?appJsp=" + encodeURIComponent(appJspUrl),
