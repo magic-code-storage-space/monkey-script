@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.26.3
+// @version      0.27
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
-// @include      /^http[s]*:\/\/config\.happyelements\..*$/
+// @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
 // @require      https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js
 // @require      https://lib.baomitu.com/jszip/3.5.0/jszip.min.js
 // @require      https://lib.baomitu.com/FileSaver.js/2.0.5/FileSaver.min.js
@@ -80,13 +80,13 @@
   // 定制化链接
   var customLinks = [
      {"type":"config", "name":["H5", "DS", "BT", "LD", "TW" /*, "新", "印"*/], "url":[
-       "https://config.happyelements.cn/config/list.do?appName=h5clover_ld",
-       "https://config.happyelements.cn/config/list.do?appName=h5clover_design1",
-       "https://config.happyelements.cn/config/list.do?appName=h5clover_shouter1",
-       "https://config.happyelements.cn/config/list.do?appName=clover_ld",
-       "https://config.happyelements.cn/config/list.do?appName=clover_en_vpc_prod0",
-       //"https://config.happyelements.cn/config/list.do?appName=clover_singapore_prod0",
-       //"https://config.happyelements.cn/config/list.do?appName=clover_india_prod0",
+       "/config/list.do?appName=h5clover_ld",
+       "/config/list.do?appName=h5clover_design1",
+       "/config/list.do?appName=h5clover_shouter1",
+       "/config/list.do?appName=clover_ld",
+       "/config/list.do?appName=clover_en_vpc_prod0",
+       //"/config/list.do?appName=clover_singapore_prod0",
+       //"/config/list.do?appName=clover_india_prod0",
      ]},
     //{"type":"sync", "name":"测试", "url":"https://www.test.com/"},
   ];
@@ -281,7 +281,7 @@
     var appId = appConfig.app_id;
 
     //链接
-    var baseUrl = "https://config.happyelements.cn";
+    var baseUrl = "";
     $("#a_page_dev").attr("href", baseUrl+"/config/list.do?appName="+devName);
     $("#a_page_stage").attr("href", baseUrl+"/config/list.do?appName="+stageName);
     $("#a_page_prod").attr("href", baseUrl+"/config/list.do?appName="+prodName);
@@ -1627,16 +1627,16 @@
       //     '    <div class="page">\n' +
       //     '      <div class="list">\n' +
       //     '        <span>Hago配置</span>\n' +
-      //     '        <div><a href="https://config.happyelements.cn/config/list.do?appName=h5clover_shouter2">Dev</a></div>\n' +
-      //     '        <div><a href="https://config.happyelements.cn/config/list.do?appName=h5clover_indonesia_test">Stage</a></div>\n' +
-      //     '        <div><a href="https://config.happyelements.cn/config/list.do?appName=h5clover_singapore">线上</a></div>\n' +
+      //     '        <div><a href="/config/list.do?appName=h5clover_shouter2">Dev</a></div>\n' +
+      //     '        <div><a href="/config/list.do?appName=h5clover_indonesia_test">Stage</a></div>\n' +
+      //     '        <div><a href="/config/list.do?appName=h5clover_singapore">线上</a></div>\n' +
       //     '      </div>\n' +
       //     '    </div>\n' +
       //     '    <div class="sync">\n' +
       //     '      <div class="list">\n' +
       //     '        <span>Hago合并</span>\n' +
-      //     '        <div><a href="https://config.happyelements.cn/merge/mergeDiff.do?settingName=h5clover_shouter2-%3Eh5clover_indonesia_test&pId=61">Dev &gt; Stage</a></div>\n' +
-      //     '        <div><a href="https://config.happyelements.cn/merge/mergeDiff.do?settingName=h5clover_indonesia_test-%3Eh5clover_singapore&pId=61">Stage &gt; 线上</a></div>\n' +
+      //     '        <div><a href="/merge/mergeDiff.do?settingName=h5clover_shouter2-%3Eh5clover_indonesia_test&pId=61">Dev &gt; Stage</a></div>\n' +
+      //     '        <div><a href="/merge/mergeDiff.do?settingName=h5clover_indonesia_test-%3Eh5clover_singapore&pId=61">Stage &gt; 线上</a></div>\n' +
       //     '      </div>\n' +
       //     '    </div>\n' +
       //     '    <div class="clear"></div>\n' +
@@ -1653,15 +1653,15 @@
           '      <div class="list">\n' +
           '        <span>SH01环境</span>\n' +
           '        <div>\n' +
-          '            <a href="https://config.happyelements.cn/config/list.do?appName=SH01_out0">外测服</a> \n' +
+          '            <a href="/config/list.do?appName=SH01_out0">外测服</a> \n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="https://config.happyelements.cn/config/list.do?appName=SH01_prod0">正式服</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_prod0">正式服</a>\n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="https://config.happyelements.cn/config/list.do?appName=SH01_channel0">渠道服</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_channel0">渠道服</a>\n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="https://config.happyelements.cn/config/list.do?appName=SH01_h5prod0">H5</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_h5prod0">H5</a>\n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="https://config.happyelements.cn/config/list.do?appName=SH01_appprod0">APP</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_appprod0">APP</a>\n' +
           '        </div>\n' +
           '      </div>\n' +
           '    </div>\n' +
