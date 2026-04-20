@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.27
+// @version      0.28
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
@@ -44,9 +44,14 @@
     "folds" : {
       "link_fold" : 0,
       "option_fold" : 1,
-      "filter_fold" : 1
+      "filter_fold_xml" : 1,
+      "filter_fold_app" : 1
     },
-    "filter" : {
+    "filter_xml" : {
+      "switch": false,
+      "value" : ""
+    },
+    "filter_app" : {
       "switch": false,
       "value" : ""
     },
@@ -126,8 +131,9 @@
   // 折叠控制
   setToolbarFoldListener();
 
-  // XML搜索过滤器
-  setXmlFilterListener();
+  // 搜索过滤器
+  setFilterListener("xml");
+  setFilterListener("app");
 
   // 选项处理器
   setOptionHandler("hidden_del_link", handlerHiddenDelLink);
@@ -762,9 +768,9 @@
     var displayNormal = checked ? "none" : "";
 
     //与“搜索XML”选项互斥
-    if (checked && isChecked("chk_filter_switch")) {
-      $("#chk_filter_switch").prop("checked", false)
-      renewConfigData("filter", "switch", false);
+    if (checked && isChecked("chk_filter_switch_xml")) {
+      $("#chk_filter_switch_xml").prop("checked", false)
+      renewConfigData("filter_xml", "switch", false);
     }
 
     $("table").each(function() {
@@ -1323,18 +1329,18 @@
   }
 
   //折叠：过滤器
-  function foldFilter(isFold) {
+  function foldFilter(isFold, filterType) {
     var display = isFold==1 ? 'none' : '';
-    $("#div_filter_list").css({"display":display});
-    $("#div_ld_toolbar #a_filter_fold")
+    $("#div_filter_list_"+filterType).css({"display":display});
+    $("#div_ld_toolbar #a_filter_fold_"+filterType)
         .attr("is_fold", isFold)
         .attr("title", isFold==1 ? "展开" : "收起")
         .html(isFold==1 ? "&or;" : "&and;");
-    $("#div_filter .action").css({"display":display});
+    $("#div_filter_"+filterType+" .action").css({"display":display});
     if (isFold == 1) {
-      $("#txt_filter_search").removeClass("search-action")
+      $("#txt_filter_search_"+filterType).removeClass("search-action")
     }else {
-      $("#txt_filter_search").addClass("search-action")
+      $("#txt_filter_search_"+filterType).addClass("search-action")
     }
   }
 
@@ -1343,7 +1349,8 @@
     //展示
     foldLink(configs.folds.link_fold);
     foldOption(configs.folds.option_fold);
-    foldFilter(configs.folds.filter_fold);
+    foldFilter(configs.folds.filter_fold_xml, "xml");
+    foldFilter(configs.folds.filter_fold_app, "app");
 
     //监听
     $("#div_ld_toolbar #a_link_fold").off("click").on("click", function() {
@@ -1362,44 +1369,53 @@
       return false;
     });
 
-    $("#div_ld_toolbar #a_filter_fold").off("click").on("click", function() {
+    $("#div_ld_toolbar #a_filter_fold_xml").off("click").on("click", function() {
       var isFold = $(this).attr("is_fold"); //老状态
       isFold = isFold==0 ? 1 : 0; //切换为新状态
-      foldFilter(isFold);
-      renewConfigData("folds", "filter_fold", isFold);
+      foldFilter(isFold, "xml");
+      renewConfigData("folds", "filter_fold_xml", isFold);
+      return false;
+    });
+
+    $("#div_ld_toolbar #a_filter_fold_app").off("click").on("click", function() {
+      var isFold = $(this).attr("is_fold"); //老状态
+      isFold = isFold==0 ? 1 : 0; //切换为新状态
+      foldFilter(isFold, "app");
+      renewConfigData("folds", "filter_fold_app", isFold);
       return false;
     });
   }
 
-  //搜索过滤XML
-  function setXmlFilterListener() {
+  //搜索过滤XML/APP
+  function setFilterListener(filterType) {
     //搜索开关
-    $("#chk_filter_switch").off("change").on("change", function() {
+    $("#chk_filter_switch_"+filterType).off("change").on("change", function() {
       //保存配置
       var checked = $(this).prop("checked");
-      renewConfigData("filter", "switch", checked);
+      renewConfigData("filter_"+filterType, "switch", checked);
 
-      //与“只显示不一致文件”选项互斥
-      if (checked && isChecked("chk_opt_show_diff_files")) {
+      // xml过滤时，与“只显示不一致文件”选项互斥
+      if (filterType == "xml" && checked && isChecked("chk_opt_show_diff_files")) {
         $("#chk_opt_show_diff_files").prop("checked", false);
         renewConfigData("options", "show_diff_files", false);
       }
 
       //执行搜索
-      var searchVal = $("#txt_filter_search").val();
-      xmlFilter(searchVal, true);
+      var searchVal = $("#txt_filter_search_"+filterType).val();
+      doFilter(searchVal, true, filterType);
+
     });
 
 
     //搜索过滤XML
-    $("#txt_filter_search").bind("input propertychange", function(event){
+    $("#txt_filter_search_"+filterType).bind("input propertychange", function(event){
       var searchVal = $(this).val();
-      xmlFilter(searchVal, false);
+      doFilter(searchVal, false, filterType);
     });
 
     //添加搜索记录
-    $("#a_filter_add").off("click").on("click", function() {
-      var filterVal = $("#txt_filter_search").val();
+    $("#a_filter_add_"+filterType).off("click").on("click", function() {
+      var filterVal = $("#txt_filter_search_"+filterType).val();
       if (!filterVal) {
         return false;
       }
@@ -1408,7 +1424,7 @@
       if (!window.localStorage) {
         return false;
       }
-      var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter");
+      var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter_"+filterType);
       if (!dataStr) {
         dataStr = "[]";
       }
@@ -1422,24 +1438,24 @@
         }
       }
       dataArr.push(filterVal);
-      window.localStorage.setItem("ld_config_manager_plus_toolbar_filter", JSON.stringify(dataArr));
+      window.localStorage.setItem("ld_config_manager_plus_toolbar_filter_"+filterType, JSON.stringify(dataArr));
 
       //展示到页面
-      $("#div_filter_list").prepend(genXmlFilterHistoryHtmlCode(filterVal));
+      $("#div_filter_list_"+filterType).prepend(genFilterHistoryHtmlCode(filterVal));
 
       //点击搜索记录
-      setXmlFilterHistoryListener();
+      setFilterHistoryListener(filterType);
 
       return false;
     });
 
     //删除搜索记录
-    $("#a_filter_del").off("click").on("click", function() {
+    $("#a_filter_del_"+filterType).off("click").on("click", function() {
       //删除缓存中的数据
       if (!window.localStorage) {
         return false;
       }
-      var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter");
+      var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter_"+filterType);
       if (!dataStr) {
         dataStr = "[]";
       }
@@ -1451,50 +1467,50 @@
         return false;
       }
       dataArr.pop();
-      window.localStorage.setItem("ld_config_manager_plus_toolbar_filter", JSON.stringify(dataArr));
+      window.localStorage.setItem("ld_config_manager_plus_toolbar_filter_"+filterType, JSON.stringify(dataArr));
 
       //展示到页面
-      $("#div_filter_list span").eq(0).remove();
+      $("#div_filter_list_"+filterType+" span").eq(0).remove();
 
       return false;
     });
 
     //加载搜索记录
-    loadXmlFilterList();
+    loadFilterList(filterType);
 
     //点击搜索记录
-    setXmlFilterHistoryListener();
+    setFilterHistoryListener(filterType);
 
     //初始搜索值
-    if (configs.filter.switch) {
-      $("#chk_filter_switch").prop("checked", true);
+    if (configs["filter_"+filterType].switch) {
+      $("#chk_filter_switch_"+filterType).prop("checked", true);
     }
-    if (configs.filter.value != '') {
-      var filterVal = configs.filter.value;
-      $("#txt_filter_search").val(filterVal);
-      xmlFilter(filterVal, false);
+    if (configs["filter_"+filterType].value != '') {
+      var filterVal = configs["filter_"+filterType].value;
+      $("#txt_filter_search_"+filterType).val(filterVal);
+      doFilter(filterVal, false, filterType);
     }
   }
 
   //点击搜索记录
-  function setXmlFilterHistoryListener() {
-    $(".filter_history").off("click").on("click", function() {
+  function setFilterHistoryListener(filterType) {
+    $("#div_filter_list_"+filterType+" .filter_history").off("click").on("click", function() {
       var filterVal = $(this).html();
-      $("#txt_filter_search").val(filterVal);
-      xmlFilter(filterVal, false);
+      $("#txt_filter_search_"+filterType).val(filterVal);
+      doFilter(filterVal, false, filterType);
       return false;
     });
   }
 
   //过滤器过滤逻辑
-  function xmlFilter(searchVal, switchChange) {
+  function doFilter(searchVal, switchChange, filterType) {
     //存数据
-    if (searchVal != configs.filter.value) {
-      renewConfigData("filter", "value", searchVal);
+    if (searchVal != configs["filter_"+filterType].value) {
+      renewConfigData("filter_"+filterType, "value", searchVal);
     }
 
     //如果开关没有开
-    if (!configs.filter.switch) {
+    if (!configs["filter_"+filterType].switch) {
       if (switchChange) {
         //如果是功能开关切换，还原页面显示
         searchVal = "";
@@ -1510,7 +1526,12 @@
 
       //只处理文件列表
       var thArr = $("tr th", thisTable);
-      if (!thArr || thArr.length < 4 || thArr.eq(0).html() != '文件名') {
+      if (!thArr || thArr.length < 4) {
+        return;
+      }
+      if (filterType == "xml" && thArr.eq(0).html() != '文件名') {
+        return;
+      }else if (filterType == "app" && thArr.eq(0).html() != 'appName') {
         return;
       }
 
@@ -1537,11 +1558,11 @@
   }
 
   //加载搜索记录
-  function loadXmlFilterList() {
+  function loadFilterList(filterType) {
     if (!window.localStorage) {
       return false;
     }
-    var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter");
+    var dataStr = window.localStorage.getItem("ld_config_manager_plus_toolbar_filter_"+filterType);
     if (!dataStr) {
       dataStr = "[]";
     }
@@ -1556,12 +1577,12 @@
         continue;
       }
       //展示到页面
-      $("#div_filter_list").prepend(genXmlFilterHistoryHtmlCode(filterVal));
+      $("#div_filter_list_"+filterType).prepend(genFilterHistoryHtmlCode(filterVal));
     }
   }
   
   //创建搜索记录HTML
-  function genXmlFilterHistoryHtmlCode(filterVal) {
+  function genFilterHistoryHtmlCode(filterVal) {
     return '<span><a href="#" class="filter_history">'+filterVal+'</a></span>';
   }
 
@@ -1777,19 +1798,36 @@
         '  <div id="div_line_filter" class="line" style="margin: 5px 0 8px 0;"></div>\n' +
         '\n' +
         '  <div class="filter">\n' +
-        '    <div><a id="a_filter_fold" class="fold filter-fold" href="#" is_fold="1">&or;</a></div>\n' +
-        '    <div id="div_filter">\n' +
+        '    <div><a id="a_filter_fold_xml" class="fold filter-fold" href="#" is_fold="1">&or;</a></div>\n' +
+        '    <div id="div_filter_xml">\n' +
         '      <div>\n' +
-        '        <input type="checkbox" id="chk_filter_switch" style="margin-right: 0px;">\n' +
-        '        <input id="txt_filter_search" class="search" type="text" placeholder="搜索XML">\n' +
-        '        <span class="action" style="display: none;"><a id="a_filter_add" href="#">增</a></span>\n' +
-        '        <span class="action" style="display: none;"><a id="a_filter_del" href="#">删</a></span>\n' +
+        '        <input type="checkbox" id="chk_filter_switch_xml" style="margin-right: 0px;">\n' +
+        '        <input id="txt_filter_search_xml" class="search" type="text" placeholder="搜索XML">\n' +
+        '        <span class="action" style="display: none;"><a id="a_filter_add_xml" href="#">增</a></span>\n' +
+        '        <span class="action" style="display: none;"><a id="a_filter_del_xml" href="#">删</a></span>\n' +
         '      </div>\n' +
-        '      <div class="list" id="div_filter_list" style="display: none;">\n' +
+        '      <div class="list" id="div_filter_list_xml" style="display: none;">\n' +
         '        <!-- <span><a href="#" class="a_filter_history">xxx.xml</a></span> -->\n' +
         '      </div>\n' +
         '    </div>\n' +
         '  </div>\n' +
+        '\n' +
+        '  <div style="margin: 8px 0 0 0;"></div>\n' +
+        '\n' +
+        '  <div class="filter">\n' +
+        '    <div><a id="a_filter_fold_app" class="fold filter-fold" href="#" is_fold="1">&or;</a></div>\n' +
+        '    <div id="div_filter_app">\n' +
+        '      <div>\n' +
+        '        <input type="checkbox" id="chk_filter_switch_app" style="margin-right: 0px;">\n' +
+        '        <input id="txt_filter_search_app" class="search" type="text" placeholder="搜索APP">\n' +
+        '        <span class="action" style="display: none;"><a id="a_filter_add_app" href="#">增</a></span>\n' +
+        '        <span class="action" style="display: none;"><a id="a_filter_del_app" href="#">删</a></span>\n' +
+        '      </div>\n' +
+        '      <div class="list" id="div_filter_list_app" style="display: none;">\n' +
+        '        <!-- <span><a href="#" class="a_filter_history">xxx.xml</a></span> -->\n' +
+        '      </div>\n' +
+        '    </div>\n' +
+        '  </div>'
         '</div>';
     return htmlCode;
   }
