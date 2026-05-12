@@ -272,8 +272,8 @@
         || appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
       if (appConfig.app_name_prefix == "SH01_channel") {
         devName = "SH01_channeldev";
-//      }else if (appConfig.app_name_prefix == "SH01_h5prod") {
-//        devName = "SH01_h5dev";
+      }else if (appConfig.app_name_prefix == "SH01_h5prod") {
+       devName = "SH01_h5dev";
       }else if (appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
         devName = "SH01_globaldev0";
       }else {
