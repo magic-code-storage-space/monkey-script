@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.29.2
+// @version      0.29.3
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
@@ -272,8 +272,8 @@
         || appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
       if (appConfig.app_name_prefix == "SH01_channel") {
         devName = "SH01_channeldev";
-      }else if (appConfig.app_name_prefix == "SH01_h5prod") {
-       devName = "SH01_h5dev";
+      // }else if (appConfig.app_name_prefix == "SH01_h5prod") {
+      //   devName = "SH01_h5dev";
       }else if (appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
         devName = "SH01_globaldev0";
       }else {
@@ -1699,6 +1699,8 @@
           '            <a href="/config/list.do?appName=SH01_out0">国内out</a> \n' +
           '            <span class="space">|</span>\n' +
           '            <a href="/config/list.do?appName=SH01_h5prod0">国内正式</a>\n' +
+          '            <span class="space">|</span>\n' +
+          '            <a href="/config/list.do?appName=SH01_dev">国内dev</a>\n' +
           '        </div>\n' +
           '        <div>\n' +
           '            <a href="/config/list.do?appName=SH01_globalout0">海外out</a>\n' +
