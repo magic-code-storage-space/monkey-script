@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.28
+// @version      0.29.2
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
@@ -79,12 +79,15 @@
     {"app_id":"96", "app_name_prefix":"SH01_h5prod", "app_jsp":"https://holiday-h5game.happyelements-sh.cn/app.jsp"}, // SH01_h5prod0
     {"app_id":"96", "app_name_prefix":"SH01_appprod", "app_jsp":"https://holiday-appgame.happyelements-sh.cn/app.jsp"}, // SH01_appprod0
     {"app_id":"96", "app_name_prefix":"SH01_channel", "app_jsp":"https://holiday-channel.happyelements-sh.cn/app.jsp"}, // SH01_channel0
+    {"app_id":"96", "app_name_prefix":"SH01_globalout", "app_jsp":"https://sh01-global-out.happyelements-sh.cn/app.jsp"}, // SH01_globalout
+    {"app_id":"96", "app_name_prefix":"SH01_globalprod", "app_jsp":"https://matchseaside-server.elementagames.com/app.jsp"}, // SH01_globalprod
+    {"app_id":"96", "app_name_prefix":"SH01_globaldev", "app_jsp":"https://sh01-global-dev.happyelements-sh.cn/app.jsp"}, // SH01_globaldev0
     {"app_id":"96", "app_name_prefix":"SH01", "app_jsp":"https://holiday-game.happyelements.cn/app.jsp"}, // SH01_dev
   ];
 
   // 定制化链接
   var customLinks = [
-     {"type":"config", "name":["H5", "DS", "BT", "LD", "TW" /*, "新", "印"*/], "url":[
+     {"type":"config", "appIds":[55, 59, 61], "name":["H5", "DS", "BT", "LD", "TW" /*, "新", "印"*/], "url":[
        "/config/list.do?appName=h5clover_ld",
        "/config/list.do?appName=h5clover_design1",
        "/config/list.do?appName=h5clover_shouter1",
@@ -93,7 +96,10 @@
        //"/config/list.do?appName=clover_singapore_prod0",
        //"/config/list.do?appName=clover_india_prod0",
      ]},
-    //{"type":"sync", "name":"测试", "url":"https://www.test.com/"},
+     {"type":"config", "appIds":[96], "name":["LD"], "url":[
+        "/config/list.do?appName=SH01_dongluo"
+      ]},
+    //{"type":"sync", "appIds":[], "name":"测试", "url":"https://www.test.com/"},
   ];
 
   // 配置查看页中需要高亮显示的关键字列表
@@ -185,6 +191,9 @@
     var appJspUrl = appConfig.app_jsp;
     var appNamePrefix = appConfig.app_name_prefix;
     var refererAppNamePrefix = configs["referer"][appNamePrefix]; // 检查appJspUrl是否需要变更
+    if (appName == "SH01_dongluo") {
+      refererAppNamePrefix = "SH01_h5prod"; // TODO::====== 硬编码，后期优化
+    }
     if (refererAppNamePrefix) {
       // 当前appNamePrefix下有指定需要使用refererAppNamePrefix的appJspUrl
       for (var i=0; i<appConfigs.length; i++) {
@@ -258,18 +267,25 @@
       mergeDiffDevName = "clover_india_dev";
     }else if(appConfig.app_name_prefix == "clover_en") {
       // 不加devId
-    }else if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod" || appConfig.app_name_prefix == "SH01_channel" || appConfig.app_name_prefix == "SH01") {
+    }else if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod"
+        || appConfig.app_name_prefix == "SH01_channel" || appConfig.app_name_prefix == "SH01"
+        || appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
       if (appConfig.app_name_prefix == "SH01_channel") {
         devName = "SH01_channeldev";
-      }else if (appConfig.app_name_prefix == "SH01_h5prod") {
-        devName = "SH01_h5dev";
+//      }else if (appConfig.app_name_prefix == "SH01_h5prod") {
+//        devName = "SH01_h5dev";
+      }else if (appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
+        devName = "SH01_globaldev0";
       }else {
         devName = "SH01_dev";
       }
 
-      // 记录下当前的appName，用于在SH01_dev环境下，继续使用前一个app_name_prefix的app_jsp作为“线上、stage”的验证地址
-      if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod" || appConfig.app_name_prefix == "SH01_channel") {
+      // 记录下当前的appName，用于在SH01_dev环境下，准备给下一次展示SH01_dev页面时，继续使用前一个app_name_prefix的app_jsp作为“线上、stage”的验证地址
+      if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod"
+          || appConfig.app_name_prefix == "SH01_channel"
+          || appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
         if (configs["referer"]["SH01"] != appConfig.app_name_prefix) {
+          // 这里的 SH01 指的是 appConfigs 中 app_name_prefix=SH01 的配置行，也就是 SH01_dev的配置
           renewConfigData("referer", "SH01", appConfig.app_name_prefix);
         }
       }
@@ -309,6 +325,10 @@
     //定制化 - 链接
     for (var i = 0; i < customLinks.length; i++) {
       var linkInfo = customLinks[i];
+      var appIds = linkInfo.appIds;
+      if (!appIds || appIds.indexOf(appId) === -1) {
+        continue;
+      }
       var htmlCode = '';
       if (Array.isArray(linkInfo.name)) {
         htmlCode += '<div>';
@@ -1666,7 +1686,9 @@
       //链接隐藏
       $("#a_sync_dev_to_prod").css({"display":"none"});
 
-    }else if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod" || appConfig.app_name_prefix == "SH01_channel" || appConfig.app_name_prefix == "SH01") {
+    }else if(appConfig.app_name_prefix == "SH01_out" || appConfig.app_name_prefix == "SH01_prod" || appConfig.app_name_prefix == "SH01_h5prod" || appConfig.app_name_prefix == "SH01_appprod"
+        || appConfig.app_name_prefix == "SH01_channel" || appConfig.app_name_prefix == "SH01"
+        || appConfig.app_name_prefix == "SH01_globalout" || appConfig.app_name_prefix == "SH01_globalprod" || appConfig.app_name_prefix == "SH01_globaldev") {
       // SH01扩展配置导航
       htmlCode = '' +
           '  <div class="config">\n' +
@@ -1674,15 +1696,16 @@
           '      <div class="list">\n' +
           '        <span>SH01环境</span>\n' +
           '        <div>\n' +
-          '            <a href="/config/list.do?appName=SH01_out0">外测服</a> \n' +
+          '            <a href="/config/list.do?appName=SH01_out0">国内out</a> \n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="/config/list.do?appName=SH01_prod0">正式服</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_h5prod0">国内正式</a>\n' +
+          '        </div>\n' +
+          '        <div>\n' +
+          '            <a href="/config/list.do?appName=SH01_globalout0">海外out</a>\n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="/config/list.do?appName=SH01_channel0">渠道服</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_globalprod0">海外正式</a>\n' +
           '            <span class="space">|</span>\n' +
-          '            <a href="/config/list.do?appName=SH01_h5prod0">H5</a>\n' +
-          '            <span class="space">|</span>\n' +
-          '            <a href="/config/list.do?appName=SH01_appprod0">APP</a>\n' +
+          '            <a href="/config/list.do?appName=SH01_globaldev0">海外dev</a>\n' +
           '        </div>\n' +
           '      </div>\n' +
           '    </div>\n' +
