@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.29.3
+// @version      0.30
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
@@ -95,10 +95,18 @@
        "/config/list.do?appName=clover_en_vpc_prod0",
        //"/config/list.do?appName=clover_singapore_prod0",
        //"/config/list.do?appName=clover_india_prod0",
-     ]},
-     {"type":"config", "appIds":[96], "name":["LD"], "url":[
+     ]}
+     ,{"type":"config", "appIds":[96], "name":["LD"], "url":[
         "/config/list.do?appName=SH01_dongluo"
-      ]},
+      ]}
+    ,{"type":"extend_hidden", "appIds":[96], "name":["磊", "辉子", "成龙", "小龙", "俊伯", "广英"], "url":[
+        "/config/list.do?appName=SH01_lei2zhang",
+        "/config/list.do?appName=SH01_hui2zhang",
+        "/config/list.do?appName=SH01_chenglongsong",
+        "/config/list.do?appName=SH01_xiaolongzhuo",
+        "/config/list.do?appName=SH01_junboliu",
+        "/config/list.do?appName=SH01_guangyingcheng",
+      ]}
     //{"type":"sync", "appIds":[], "name":"测试", "url":"https://www.test.com/"},
   ];
 
@@ -333,7 +341,12 @@
       if (Array.isArray(linkInfo.name)) {
         htmlCode += '<div>';
         for (var j = 0; j < linkInfo.name.length; j++) {
-          htmlCode += (j==0?'':'<span style="padding:0 2px;"></span>')+'<a href="'+linkInfo.url[j]+'">'+linkInfo.name[j]+'</a>';
+          if (linkInfo.type == "extend") {
+            htmlCode += (j==0?'':'<span class="space">|</span>');
+          }else {
+            htmlCode += (j==0?'':'<span style="padding:0 2px;"></span>');
+          }
+          htmlCode += '<a href="'+linkInfo.url[j]+'">'+linkInfo.name[j]+'</a>';
         }
         htmlCode += '</div>';
       }else {
@@ -1693,7 +1706,7 @@
       htmlCode = '' +
           '  <div class="config">\n' +
           '    <div class="">\n' +
-          '      <div class="list">\n' +
+          '      <div class="list" id="div_extend_links">\n' +
           '        <span>SH01环境</span>\n' +
           '        <div>\n' +
           '            <a href="/config/list.do?appName=SH01_out0">国内out</a> \n' +
