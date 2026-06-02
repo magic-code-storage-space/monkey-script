@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         he_config_manager
 // @namespace    http://tampermonkey.net/
-// @version      0.30
+// @version      0.30.1
 // @description  HE配置管理工具页面增强
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/config.*\.happyelements\..*$/
@@ -99,13 +99,27 @@
      ,{"type":"config", "appIds":[96], "name":["LD"], "url":[
         "/config/list.do?appName=SH01_dongluo"
       ]}
-    ,{"type":"extend_hidden", "appIds":[96], "name":["磊", "辉子", "成龙", "小龙", "俊伯", "广英"], "url":[
+    ,{"type":"extend2", "appIds":[96], "name":["磊", "辉", "龙", "小", "伯", "英", "航", "赟", "盈"], "url":[
         "/config/list.do?appName=SH01_lei2zhang",
         "/config/list.do?appName=SH01_hui2zhang",
         "/config/list.do?appName=SH01_chenglongsong",
         "/config/list.do?appName=SH01_xiaolongzhuo",
         "/config/list.do?appName=SH01_junboliu",
         "/config/list.do?appName=SH01_guangyingcheng",
+        "/config/list.do?appName=SH01_yuhangzhou",
+        "/config/list.do?appName=SH01_guoyunzhang",
+        "/config/list.do?appName=SH01_yingyinggao",
+      ]}
+    ,{"type":"extend2", "appIds":[96], "name":["磊", "辉", "龙", "小", "伯", "英", "航", "赟", "盈"], "url":[
+        "/config/list.do?appName=SH01_lei2zhangG",
+        "/config/list.do?appName=SH01_hui2zhangG",
+        "/config/list.do?appName=SH01_chenglongsongG",
+        "/config/list.do?appName=SH01_xiaolongzhuoG",
+        "/config/list.do?appName=SH01_junboliuG",
+        "/config/list.do?appName=SH01_guangyingchengG",
+        "/config/list.do?appName=SH01_yuhangzhouG",
+        "/config/list.do?appName=SH01_guoyunzhangG",
+        "/config/list.do?appName=SH01_yingyinggaoG",
       ]}
     //{"type":"sync", "appIds":[], "name":"测试", "url":"https://www.test.com/"},
   ];
