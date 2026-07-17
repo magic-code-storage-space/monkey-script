@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         feishu_doc_sheet_finder
 // @namespace    http://tampermonkey.net/
-// @version      0.3.6
+// @version      0.3.7
 // @description  飞书文档Excel页签搜索框
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.feishu\.cn\/sheets\/.*$/
@@ -120,7 +120,7 @@
         if ($("#ld-feishu-sheet-finder").size() != 0) {
             return false;
         }
-        $("div", sheetMenuDiv).eq(0).before(genSheetFinderHtmlCode()); // 注入代码
+        $("ul", sheetMenuDiv).eq(0).before(genSheetFinderHtmlCode()); // 注入代码
 
 
         // 模拟点击查找替换按钮（用来支持Ctrl+V）
