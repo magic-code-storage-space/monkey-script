@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         feishu_doc_sheet_finder_DEV
+// @name         feishu_doc_sheet_finder
 // @namespace    http://tampermonkey.net/
-// @version      0.3.8
+// @version      0.3.9
 // @description  飞书文档Excel页签搜索框
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.feishu\.cn\/sheets\/.*$/
