@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         feishu_doc_sheet_finder
+// @name         feishu_doc_sheet_finder_DEV
 // @namespace    http://tampermonkey.net/
-// @version      0.3.7
+// @version      0.3.8
 // @description  飞书文档Excel页签搜索框
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.feishu\.cn\/sheets\/.*$/
@@ -20,6 +20,8 @@
 
     // 注入样式
     $("body").append(genCssHtmlCode());
+
+    var openCustomSheetSearch = false; // 是否开启自定义页签搜索框（默认不开启，使用系统原生搜索框）
 
     // 开启定时检查
     setInterval(function() {
@@ -88,6 +90,13 @@
 
     // 初始化搜索框
     function initSheetSearchInput() {
+        // 自定义搜索框开关
+        if (!openCustomSheetSearch) {
+            return false; // 关闭自定义搜索框、使用原生搜索框
+        }else {
+            $(".all-sheets-search").remove(); // 开启自定义搜索框，关闭原生搜索框
+        }
+
         // 页签列表菜单div
         var sheetMenuDiv = $(".all-sheets-wrapper .all-sheet-list");
         if (!sheetMenuDiv || sheetMenuDiv.size() != 1) {
