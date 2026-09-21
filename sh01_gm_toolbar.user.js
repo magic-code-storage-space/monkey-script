@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         sh01_gm_toolbar
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  SH01-GM-页面工具
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.happyelements\.net\/royal.*$/
@@ -33,7 +33,7 @@
       return;
     }
     const timerId = setInterval(function(){
-      $(".string", $("#pre_json_show")).each(function() {
+      $(".number", $("#pre_json_show")).each(function() {
         // 一个节点只处理一次
         var transFlag = $(this).attr('transFlag');
         if (transFlag == "1") {
@@ -42,15 +42,8 @@
         $(this).attr('transFlag', '1'); // 设置已处理标识
         clearInterval(timerId);
 
-        var stringVal = $(this).html();
-        const match = stringVal.match(/^"(\d+)"$/);
-        var numberVal = match ? match[1] : null;
-        if (numberVal == null) {
-          return;
-        }
-
         // 尝试将数字转换成时间戳
-        var dateInfo = timestampFormat(numberVal);
+        var dateInfo = timestampFormat($(this).html());
         if (dateInfo) {
           $(this).after(dateInfo);
         }
@@ -139,7 +132,7 @@
         '.ld-toolbar .key {color: red;}\n' +
         '.ld-toolbar .nav{height: 30px; line-height: 100%; font-size: 16px;}\n' +
         '.ld-toolbar .nav a{padding:0 20px 30px 0;}\n' +
-        '.ld-toolbar #pre_json_show{font-family: Monaco, Menlo, Consolas, "Courier New", monospace;}\n' +
+        '.ld-toolbar #pre_json_show{font-family: Monaco, Menlo, Consolas, "Courier New", monospace; line-height: 140%;}\n' +
         '</style>\n' +
         '<div class="ld-toolbar">\n' +
         '  <div class="nav"><a id="a_json_show" href="#">查看</a><a id="a_json_edit" href="#">编辑</a></div>\n' +
@@ -158,6 +151,14 @@
           if (/^"/.test(match)) {
             if (/:$/.test(match)) {
               cls = 'key';
+            } else if(/^"(\d+)"$/.test(match)) {
+              cls = 'number';
+              match = getCleanValue(match);
+
+            } else if (/^"true|false"$/.test(match)) {
+              cls = 'boolean';
+              match = getCleanValue(match);
+
             } else {
               cls = 'string';
             }
@@ -169,6 +170,15 @@
           return '<span class="' + cls + '">' + match
               + '</span>';
         });
+  }
+
+  // 输入"abc"返回abc
+  function getCleanValue(str) {
+    const m = str.match(/^"([^"]+)"$/);
+    if (m) {
+      str = m[1];
+    }
+    return str;
   }
 
 })();
