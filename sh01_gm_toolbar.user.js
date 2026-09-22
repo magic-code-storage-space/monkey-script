@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         sh01_gm_toolbar
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  SH01-GM-页面工具
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.happyelements\.net\/royal.*$/
@@ -20,18 +20,21 @@
   // var $ = window.jQuery;
   var $ = window.jQuery.noConflict(true);
 
-  // 插入样式
-  appendToolbar();
-
   // 时间戳转换成时间
   handlerTimestampShow();
 
   // 时间戳转换成时间
   function handlerTimestampShow() {
     var pageUrl = window.location.pathname;
-    if (pageUrl.indexOf("getUserData.action") == -1) {
+    if (pageUrl.indexOf("/newUserData/getUserData.action") == -1
+        && pageUrl.indexOf("/bean/getData.action") == -1
+        && pageUrl.indexOf("/userMatch/getUserData.action") == -1) {
       return;
     }
+
+    // 插入样式
+    appendToolbar();
+
     const timerId = setInterval(function(){
       $(".number", $("#pre_json_show")).each(function() {
         // 一个节点只处理一次
@@ -58,11 +61,11 @@
       return "";
     }
 
-    if (timeInfo.length == 5 && timeInfo >= 10957 && timeInfo <= 29220) {
+    if (timeInfo.length == 5 && timeInfo >= 18262 && timeInfo <= 29220) {
       // 格式一：第N天
-      // 10957  2000-01-01 00:00:00
+      // 18262  2020-01-01 00:00:00
       // 29220  2050-01-01 00:00:00
-      //// timeInfo = timeInfo * 24 * 60 * 60 * 1000 - 28800000;
+      timeInfo = timeInfo * 24 * 60 * 60 * 1000 - 28800000;
 
     }else if(timeInfo.length == 10 && timeInfo >= 1577808000 && timeInfo <= 2524579200) {
       // 格式二：时间戳（单位秒）
@@ -72,7 +75,7 @@
     }
 
     // 时间戳检查
-    if (timeInfo < 1577808000 || timeInfo > 2524579200000) {
+    if (timeInfo < 1577808000000 || timeInfo > 2524579200000) {
       return "";
     }
 
