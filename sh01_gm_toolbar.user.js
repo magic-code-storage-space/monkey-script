@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         sh01_gm_toolbar
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  SH01-GM-页面工具
 // @author       dong.luo@happyelements.com
 // @include      /^http[s]*:\/\/.*\.happyelements\.net\/royal.*$/
@@ -106,9 +106,11 @@
     var jsonString = $("#originJsonData").val();
     td.html(genToolbarHtmlCode());
 
-    var jsonObj = $.parseJSON(jsonString);
-    var formattedJson = JSON.stringify(jsonObj, undefined, 2);
-    $("#pre_json_show").html(syntaxHighlight(formattedJson));
+    if (jsonString) {
+      var jsonObj = $.parseJSON(jsonString);
+      var formattedJson = JSON.stringify(jsonObj, undefined, 2);
+      $("#pre_json_show").html(syntaxHighlight(formattedJson));
+    }
     $("#div_json_edit").html(oldHtmlCode);
 
 
